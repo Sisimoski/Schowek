@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\Assets\avatar.JPG" />
+    <None Include="wwwroot\Assets\SchowekLogo.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
   </ItemGroup>
 
@@ -19,4 +23,12 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\css\boostrap5\" />
+    <Folder Include="wwwroot\Assets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\Assets\avatar.JPG" />
+    <Content Remove="wwwroot\Assets\SchowekLogo.png" />
+  </ItemGroup>
 </Project>

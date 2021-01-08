@@ -1,24 +1,28 @@
-﻿<!-- Main Footer -->
-<footer class="main-footer">
-    <div class="input-group">
-        <input type="text" class="form-control" placeholder="Wprowadź podpis..." aria-label="Text input with segmented dropdown button">
-        <button type="button" class="btn btn-outline-primary">Wyślij</button>
-        <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split"
-                data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="visually-hidden">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item disabled" href="#">Więcej</a></li>
-            <li>
-                <hr class="dropdown-divider">
-            </li>
+﻿<AuthorizeView>
+    <Authorized>
+        <!-- Main Footer -->
+        <footer class="main-footer">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Wprowadź podpis..." aria-label="Text input with segmented dropdown button">
+                <button type="button" class="btn btn-outline-primary">Wyślij</button>
+                <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item disabled" href="#">Więcej</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
 
-            <li><a class="dropdown-item" href="#">Przeglądaj plik...</a></li>
-            <li><a class="dropdown-item" href="#">Obraz z linku...</a></li>
+                    <li><a class="dropdown-item" href="#">Przeglądaj plik...</a></li>
+                    <li><a class="dropdown-item" href="#">Obraz z linku...</a></li>
 
-        </ul>
-    </div>
-</footer>
+                </ul>
+            </div>
+        </footer>
+    </Authorized>
+</AuthorizeView>
 
 @code {
 

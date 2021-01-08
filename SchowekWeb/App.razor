@@ -1,11 +1,13 @@
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@true">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout)" />
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout)">
+
+            </AuthorizeRouteView>
         </Found>
         <NotFound>
             <LayoutView Layout="@typeof(Layout)">
-                <p>Sorry, there's nothing at this address.</p>
+                <p>Niestety, pod tym adresem nic nie ma.</p>
             </LayoutView>
         </NotFound>
     </Router>

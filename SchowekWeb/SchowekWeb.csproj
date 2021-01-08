@@ -26,6 +26,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\css\boostrap5\" />
     <Folder Include="wwwroot\Assets\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="wwwroot\Assets\avatar.JPG" />

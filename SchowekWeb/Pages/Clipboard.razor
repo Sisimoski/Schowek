@@ -1,0 +1,21 @@
+﻿@page "/"
+
+<AuthorizeView>
+    <Authorized>
+        <h1>Hello, world!</h1>
+
+        Welcome to your new app.
+
+        <SurveyPrompt Title="How is Blazor working for you?" />
+    </Authorized>
+    <NotAuthorized>
+        <h1>Witaj w Schowku</h1>
+        <p>
+            Aby zacząć korzystać ze schowka zaloguj się lub zarejestruj konto, jeśli jeszcze nie masz.
+        </p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+}

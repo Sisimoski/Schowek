@@ -19,7 +19,6 @@ namespace SchowekWeb.Models
 
         public ICollection<Item> Items { get; set; }
 
-        public string UserId { get; set; }
         public AspNetUsers AspNetUsers { get; set; }
     }
 }

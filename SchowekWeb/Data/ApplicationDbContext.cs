@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using SchowekWeb.Models;
 
 namespace SchowekWeb.Data
 {
@@ -12,5 +13,8 @@ namespace SchowekWeb.Data
             : base(options)
         {
         }
+
+        public DbSet<Item> Items { get; set; }
+        public DbSet<Category> Categories { get; set; }
     }
 }

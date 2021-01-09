@@ -1,18 +1,46 @@
 ﻿@page "/"
 
+@using System.Security.Claims
+@using System.IO
 @using Microsoft.AspNetCore.Identity
 @using SchowekWeb.Data
 @using SchowekWeb.Models
-@inject ApplicationDbContext DbContext
+
+@*@inject IWebHostEnvironment env*@
+@inject UserManager<AspNetUsers> userManager
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor
 @inject IDataAccess _data
 
-<AuthorizeView>
+<AuthorizeView Context="Auth">
     <Authorized>
-        <h3>Dodaj nowy schowek</h3>
-        <button class="btn btn-primary">Dodaj</button>
+        <h1>Twoje Id: @UserId</h1>
 
-        @if (Categories != null)
-        {
+        <h3>Dodaj nowy schowek</h3>
+
+        <EditForm Model="@clipboard" OnValidSubmit="@InsertCategory">
+            <DataAnnotationsValidator />
+            <div class="mb-3">
+                <label class="form-label">Wprowadź nazwę schowka:</label>
+                <InputText @bind-Value="@clipboard.CategoryName" class="form-control" placeholder="Na później"></InputText>
+                <ValidationMessage For="@(() => clipboard.CategoryName)" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Wybierz ikonę:</label>
+                <InputFile class="form-control" type="file"></InputFile>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Utworzono: </label>
+                <input class="form-control" type="text" placeholder="@DateTime.Now" readonly>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Użytkownik:</label>
+                <input class="form-control" type="text" placeholder="@UserId" readonly>
+            </div>
+            <ValidationSummary/>
+            <button type="submit" class="btn btn-primary">Dodaj</button>
+        </EditForm>
+
+        
             <h4>Lista schowków: </h4>
             <table class="table">
                 <thead>
@@ -25,21 +53,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var category in Categories)
+                    @if (Categories != null)
                     {
-                        <tr>
-                            <th>@category.Id</th>
-                            <td>@category.CategoryName</td>
-                            <td>@category.Icon</td>
-                            <td>@category.OnCreated</td>
-                            <td>@category.AspNetUsers.Id</td>
-                        </tr>
+                        @foreach (var category in Categories)
+                        {
+                            <tr>
+                                <th>@category.Id</th>
+                                <td>@category.UserId</td>
+                                <td>@category.CategoryName</td>
+                                <td>@category.Icon</td>
+                                <td>@category.OnCreated</td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
-        } else
-        {
-            <h4 class="text-danger">Brak schowków.</h4>
         }
 
 
@@ -54,8 +82,58 @@
 </AuthorizeView>
 
 @code {
+    @*IReadOnlyList<IBrowserFile> selectedFiles;
+
+        private void OnInputFileChange(InputFileChangeEventArgs e)
+        {
+            selectedFiles = e.GetMultipleFiles();
+            this.StateHasChanged();
+        }*@
+
+    public string UserId { get; set; }
 
     List<Category> Categories;
+
+    Category clipboard = new Category();
+
+    private async Task InsertCategory()
+    {
+        var newCategory = new Category
+        {
+            CategoryName = clipboard.CategoryName,
+            Icon = clipboard.Icon,
+            OnCreated = DateTime.Now,
+            UserId = this.UserId
+        };
+        await _data.AddCategory(newCategory);
+        await OnInitializedAsync();
+    }
+
+
+    @*public byte[] ImageToByteArray(System.Drawing.Image imageInput)
+        {
+            using(var ms = new MemoryStream())
+            {
+                imageInput.Save(ms, System.Drawing.Imaging.ImageFormat)
+            }
+        }
+        private async Task UploadCategoryIconToDatabase()
+        {
+
+        }*@
+
+    public void GetUserIdData()
+    {
+        if (_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated == true)
+        {
+            UserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        GetUserIdData();
+    }
 
     protected override async Task OnInitializedAsync()
     {

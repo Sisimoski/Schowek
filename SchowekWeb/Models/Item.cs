@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using SchowekWeb.Data;
 
 namespace SchowekWeb.Models
@@ -19,6 +20,9 @@ namespace SchowekWeb.Models
         public int CategoryId { get; set; }
         public Category Category { get; set; }
 
+        public string UserId { get; set; }
+
+        [ForeignKey("UserId")]
         public AspNetUsers AspNetUsers { get; set; }
 
     }

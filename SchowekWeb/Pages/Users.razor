@@ -5,11 +5,14 @@
 @using SchowekWeb.Data
 @inject UserManager<AspNetUsers> userManager
 @inject ApplicationDbContext DbContext
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor
 
 <AuthorizeView>
     <h3>Użytkownicy</h3>
 
     <h4>Aktualnie zalogowany użytkownik:</h4>
+    <p>Id: @UserId</p>
     <p>Id: @context.User.FindFirstValue(ClaimTypes.NameIdentifier)</p>
 
     <table class="table">
@@ -41,12 +44,24 @@
     //Users List Property
     private List<AspNetUsers> UsersList { get; set; }
 
-    [Parameter]
     public string UserId { get; set; }
 
     protected override void OnInitialized()
     {
         UsersList = DbContext.Users.ToList<AspNetUsers>();
 
+        UserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
     }
+
+    @*protected override async Task OnInitializedAsync()
+    {
+        await GetCurrentUserIdData();
+    }
+
+    private async Task GetCurrentUserIdData()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        UserId = authState.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    }*@
 }

@@ -1,12 +1,49 @@
 ﻿@page "/"
 
+@using Microsoft.AspNetCore.Identity
+@using SchowekWeb.Data
+@using SchowekWeb.Models
+@inject ApplicationDbContext DbContext
+@inject IDataAccess _data
+
 <AuthorizeView>
     <Authorized>
-        <h1>Hello, world!</h1>
+        <h3>Dodaj nowy schowek</h3>
+        <button class="btn btn-primary">Dodaj</button>
 
-        Welcome to your new app.
+        @if (Categories != null)
+        {
+            <h4>Lista schowków: </h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#Id Schowka</th>
+                        <th scope="col">Użytkownik</th>
+                        <th scope="col">Nazwa kategorii</th>
+                        <th scope="col">Ikona</th>
+                        <th scope="col">Utworzono</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in Categories)
+                    {
+                        <tr>
+                            <th>@category.Id</th>
+                            <td>@category.CategoryName</td>
+                            <td>@category.Icon</td>
+                            <td>@category.OnCreated</td>
+                            <td>@category.AspNetUsers.Id</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        } else
+        {
+            <h4 class="text-danger">Brak schowków.</h4>
+        }
 
-        <SurveyPrompt Title="How is Blazor working for you?" />
+
+
     </Authorized>
     <NotAuthorized>
         <h1>Witaj w Schowku</h1>
@@ -17,5 +54,12 @@
 </AuthorizeView>
 
 @code {
+
+    List<Category> Categories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = await _data.GetCategories();
+    }
 
 }

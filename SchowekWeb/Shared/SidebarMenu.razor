@@ -26,11 +26,21 @@
         <nav class="mt-2">
             <AuthorizeView>
                 <Authorized>
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                    <ul class="nav nav-pills nav-sidebar flex-column mx-2" data-widget="treeview" role="menu"
                         data-accordion="false">
-                        
+
+                        <!-- Add New Clipboard -->
                         <li class="nav-item">
-                            <NavLink href="" class="nav-link">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary nav-link" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    <i class="nav-icon bi bi-plus-square"></i>
+                                    Dodaj nowy schowek
+                                </button>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <NavLink href="/" class="nav-link">
                                 <i class="nav-icon fas fa-th"></i>
                                 <p>
                                     Strona domowa
@@ -39,21 +49,14 @@
                             </NavLink>
                         </li>
                         <li class="nav-item">
-                            <NavLink href="fetchdata" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
+                            <NavLink href="Users" class="nav-link">
+                                <i class="bi bi-people-fill"></i>
                                 <p>
-                                    Fetch data
+                                    Lista użytkowników
                                 </p>
                             </NavLink>
                         </li>
-                        <li class="nav-item">
-                            <NavLink href="counter" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
-                                <p>
-                                    Counter
-                                </p>
-                            </NavLink>
-                        </li>
+
                     </ul>
                 </Authorized>
             </AuthorizeView>

@@ -32,7 +32,7 @@ namespace SchowekWeb.Data
         }
 
         // GET User's Category by UserID
-        public async Task<List<Category>> GetUsersCategory(string userId)
+        public async Task<List<Category>> GetUsersCategories(string userId)
         {
             var result = await _dbContext.Categories.Where(c => c.UserId == userId).ToListAsync();
             return result;
@@ -83,6 +83,13 @@ namespace SchowekWeb.Data
         public async Task<Item> GetItem(int itemId)
         {
             var result = await _dbContext.Items.FirstOrDefaultAsync(i => i.Id == itemId);
+            return result;
+        }
+
+
+        public async Task<List<Item>> GetUsersItems(string userId)
+        {
+            var result = await _dbContext.Items.Where(i => i.UserId == userId).ToListAsync();
             return result;
         }
 

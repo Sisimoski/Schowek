@@ -2,7 +2,7 @@
 @model RegisterModel
 @{
     ViewData["Title"] = "Zarejestruj się";
-    Layout = "/Pages/Shared/_AuthLayout.cshtml";
+    Layout = "/Pages/Shared/_RegisterLayout.cshtml";
 }
 
 <form id="account" method="post">
@@ -28,9 +28,11 @@
 
     <button class="btn btn-lg btn-primary btn-block" type="submit">Zarejestruj się</button>
 
-    <p>
+    <a class="btn btn-outline-secondary btn-block btn-sm" asp-page="./Login">Masz już konto? Zaloguj się.</a>
+
+    @*<p>
         <a asp-page="./Login">Masz konto? Zaloguj się</a>
-    </p>
+    </p>*@
 
     <p class="mt-5 mb-3 text-muted">&copy; Marcin Chmurowski 2020</p>
 </form>

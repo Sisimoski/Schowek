@@ -1,22 +1,61 @@
-﻿<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+﻿@using SchowekWeb.Data
+@using SchowekWeb.Models
+@inject IDataAccess _data
+@inject UserAccess userData
+<!-- Modal -->
+<EditForm Model="@newCategory" OnValidSubmit="@InsertCategory">
+    <div class="modal fade" id="addNewCategory" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Dodaj nowy schowek</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <DataAnnotationsValidator />
+                    <InputText @bind-Value="@newCategory.CategoryName" type="text" class="form-control" placeholder="Wprowadź nazwę schowka" />
+                    <ValidationMessage For="() => newCategory.CategoryName" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">Dodaj</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</EditForm>
 
 @code {
+    private string UserId { get; set; }
 
+    List<Category> Categories;
+
+    private DisplayCategoryModel newCategory = new DisplayCategoryModel();
+
+    private async Task InsertCategory()
+    {
+        Category c = new Category
+        {
+            CategoryName = newCategory.CategoryName,
+            Icon = newCategory.Icon,
+            OnCreated = DateTime.Now,
+            UserId = this.UserId
+        };
+        await _data.AddCategory(c);
+
+        Categories.Add(c);
+
+        newCategory = new DisplayCategoryModel();
+    }
+
+    protected override void OnInitialized()
+    {
+        UserId = userData.GetUserIdData();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = await _data.GetUsersCategories(UserId);
+
+    }
 }

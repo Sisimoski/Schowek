@@ -1,9 +1,0 @@
-﻿@page "/RedirectToLogin"
-@inject NavigationManager navigation
-
-@code {
-    protected override void OnInitialized()
-    {
-        navigation.NavigateTo("/Areas/Identity/Pages/Account/Login.cshtml");
-    }
-}

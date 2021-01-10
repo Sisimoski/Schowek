@@ -1,0 +1,57 @@
+﻿@using SchowekWeb.Data
+@using SchowekWeb.Models
+@inject IDataAccess _data
+@inject UserAccess userData
+
+<h3>Lista Twoich schowków</h3>
+<p>@UserId</p>
+
+@if (Categories != null)
+{
+    @if (Categories.Count > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#Id Schowka</th>
+                    <th scope="col">Użytkownik</th>
+                    <th scope="col">Nazwa kategorii</th>
+                    <th scope="col">Ikona</th>
+                    <th scope="col">Utworzono</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in Categories)
+                {
+                    <tr>
+                        <th>@category.Id</th>
+                        <td>@category.UserId</td>
+                        <td>@category.CategoryName</td>
+                        <td>@category.Icon</td>
+                        <td>@category.OnCreated</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h1 class="display-6 text-warning">Brak schowków.</h1>
+    }
+}
+
+@code {
+    private string UserId { get; set; }
+
+    List<Category> Categories;
+
+    protected override void OnInitialized()
+    {
+        UserId = userData.GetUserIdData();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = await _data.GetUsersCategories(UserId);
+    }
+}

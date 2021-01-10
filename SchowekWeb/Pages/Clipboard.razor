@@ -13,62 +13,7 @@
 
 <AuthorizeView Context="Auth">
     <Authorized>
-        <h1>Twoje Id: @UserId</h1>
-        <h4>Lista schowków: </h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#Id Schowka</th>
-                    <th scope="col">Użytkownik</th>
-                    <th scope="col">Nazwa kategorii</th>
-                    <th scope="col">Ikona</th>
-                    <th scope="col">Utworzono</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Categories != null)
-                {
-                    @foreach (var category in Categories)
-                    {
-                        <tr>
-                            <th>@category.Id</th>
-                            <td>@category.UserId</td>
-                            <td>@category.CategoryName</td>
-                            <td>@category.Icon</td>
-                            <td>@category.OnCreated</td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
 
-        <h4>Lista Twoich schowków (@UserId): </h4>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#Id Schowka</th>
-                    <th scope="col">Użytkownik</th>
-                    <th scope="col">Nazwa kategorii</th>
-                    <th scope="col">Ikona</th>
-                    <th scope="col">Utworzono</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Categories != null)
-                {
-                    @foreach (var category in UsersCategories)
-                    {
-                        <tr>
-                            <th>@category.Id</th>
-                            <td>@category.UserId</td>
-                            <td>@category.CategoryName</td>
-                            <td>@category.Icon</td>
-                            <td>@category.OnCreated</td>
-                        </tr>
-                    }
-                }
-            </tbody>
-        </table>
     </Authorized>
     <NotAuthorized>
         <h1>Witaj w Schowku</h1>
@@ -137,7 +82,7 @@ protected override void OnInitialized()
 protected override async Task OnInitializedAsync()
 {
     Categories = await _data.GetCategories();
-    UsersCategories = await _data.GetUsersCategory(UserId);
+    UsersCategories = await _data.GetUsersCategories(UserId);
 }
 
 }

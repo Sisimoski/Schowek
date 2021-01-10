@@ -54,6 +54,7 @@ namespace SchowekWeb
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AspNetUsers>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
+            services.AddSingleton<UserAccess>();
             services.AddSingleton<WeatherForecastService>();
             services.AddScoped<IDataAccess, DataAccess>();
             services.AddHttpContextAccessor();

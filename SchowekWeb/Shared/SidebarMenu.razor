@@ -34,27 +34,30 @@
                     <ul class="nav nav-pills nav-sidebar flex-column mx-2" data-widget="treeview" role="menu"
                         data-accordion="false">
 
-                        <!-- Add New Clipboard -->
-                        <li class="nav-item">
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-outline-primary nav-link" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                    <i class="nav-icon bi bi-plus-square"></i>
+                        <li class="nav-item border border-primary rounded">
+                            <NavLink href="#addNewCategory" class="nav-link m-0" data-bs-toggle="modal">
+                                <i class="nav-icon bi bi-plus-square"></i>
+                                <p>
                                     Dodaj nowy schowek
-                                </button>
-                            </div>
+                                </p>
+                            </NavLink>
                         </li>
+                    </ul>
+                    <hr class="mx-2"/>
+                    <ul class="nav nav-pills nav-sidebar flex-column mx-2" data-widget="treeview" role="menu"
+                        data-accordion="false">
 
                         <li class="nav-item">
-                            <NavLink href="/" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
+                            <NavLink href="Dashboard" class="nav-link">
+                                <i class="nav-icon bi bi-columns-gap"></i>
                                 <p>
-                                    Strona domowa
+                                    Dashboard
                                 </p>
                             </NavLink>
                         </li>
                         <li class="nav-item">
                             <NavLink href="Users" class="nav-link">
-                                <i class="bi bi-people-fill"></i>
+                                <i class="nav-icon bi bi-people-fill"></i>
                                 <p>
                                     Lista użytkowników
                                 </p>
@@ -66,7 +69,7 @@
                             {
                                 <li class="nav-item">
                                     <NavLink href="#" class="nav-link">
-                                        <i class="bi bi-card-list"></i>
+                                        <i class="nav-icon bi bi-card-list"></i>
                                         <p>
                                             @clipboards.CategoryName
                                         </p>
@@ -139,7 +142,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Categories = await _data.GetUsersCategory(UserId);
+        Categories = await _data.GetUsersCategories(UserId);
 
     }
 }

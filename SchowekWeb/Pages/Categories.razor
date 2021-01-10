@@ -1,0 +1,31 @@
+﻿@*<h4>Lista schowków: </h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#Id Schowka</th>
+            <th scope="col">Użytkownik</th>
+            <th scope="col">Nazwa kategorii</th>
+            <th scope="col">Ikona</th>
+            <th scope="col">Utworzono</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Categories != null)
+        {
+            @foreach (var category in Categories)
+            {
+                <tr>
+                    <th>@category.Id</th>
+                    <td>@category.UserId</td>
+                    <td>@category.CategoryName</td>
+                    <td>@category.Icon</td>
+                    <td>@category.OnCreated</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>*@
+
+@code {
+
+}

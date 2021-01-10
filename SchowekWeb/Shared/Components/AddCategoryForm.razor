@@ -1,15 +1,15 @@
-﻿@*@using SchowekWeb.Data
+﻿@using SchowekWeb.Data
 @using SchowekWeb.Models
 
 @inject IDataAccess _data
 
 <h3>Dodaj nowy schowek</h3>
 
-<EditForm Model="@Clipboard">
+<EditForm Model="@CategoryModel">
     <DataAnnotationsValidator />
     <div class="mb-3">
         <label class="form-label">Wprowadź nazwę schowka:</label>
-        <InputText @bind-Value="@Clipboard.CategoryName" class="form-control" placeholder="Na później"></InputText>
+        <InputText @bind-Value="@CategoryModel.CategoryName" class="form-control" placeholder="Na później"></InputText>
     </div>
     <div class="mb-3">
         <label class="form-label">Wybierz ikonę:</label>
@@ -21,14 +21,15 @@
     </div>
     <div class="mb-3">
         <label class="form-label">Użytkownik:</label>
-        <input class="form-control" type="text" placeholder="@UserId" readonly>
+        <input class="form-control" type="text" placeholder="@ToBeCreatedBy" readonly>
     </div>
     <button type="submit" class="btn btn-primary">Dodaj</button>
 </EditForm>
 
 @code {
-    public string UserId { get; set; }
+    [Parameter]
+    public string ToBeCreatedBy { get; set; }
 
     [Parameter]
-    public Category Clipboard { get; set; }
-}*@
+    public Category CategoryModel { get; set; }
+}

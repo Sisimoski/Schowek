@@ -14,64 +14,61 @@
 <AuthorizeView Context="Auth">
     <Authorized>
         <h1>Twoje Id: @UserId</h1>
-
-        <h3>Dodaj nowy schowek</h3>
-
-        <EditForm Model="@clipboard" OnValidSubmit="@InsertCategory">
-            <DataAnnotationsValidator />
-            <div class="mb-3">
-                <label class="form-label">Wprowadź nazwę schowka:</label>
-                <InputText @bind-Value="@clipboard.CategoryName" class="form-control" placeholder="Na później"></InputText>
-                <ValidationMessage For="@(() => clipboard.CategoryName)" />
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Wybierz ikonę:</label>
-                <InputFile class="form-control" type="file"></InputFile>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Utworzono: </label>
-                <input class="form-control" type="text" placeholder="@DateTime.Now" readonly>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Użytkownik:</label>
-                <input class="form-control" type="text" placeholder="@UserId" readonly>
-            </div>
-            <ValidationSummary/>
-            <button type="submit" class="btn btn-primary">Dodaj</button>
-        </EditForm>
-
-        
-            <h4>Lista schowków: </h4>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">#Id Schowka</th>
-                        <th scope="col">Użytkownik</th>
-                        <th scope="col">Nazwa kategorii</th>
-                        <th scope="col">Ikona</th>
-                        <th scope="col">Utworzono</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Categories != null)
+        <h4>Lista schowków: </h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#Id Schowka</th>
+                    <th scope="col">Użytkownik</th>
+                    <th scope="col">Nazwa kategorii</th>
+                    <th scope="col">Ikona</th>
+                    <th scope="col">Utworzono</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Categories != null)
+                {
+                    @foreach (var category in Categories)
                     {
-                        @foreach (var category in Categories)
-                        {
-                            <tr>
-                                <th>@category.Id</th>
-                                <td>@category.UserId</td>
-                                <td>@category.CategoryName</td>
-                                <td>@category.Icon</td>
-                                <td>@category.OnCreated</td>
-                            </tr>
-                        }
+                        <tr>
+                            <th>@category.Id</th>
+                            <td>@category.UserId</td>
+                            <td>@category.CategoryName</td>
+                            <td>@category.Icon</td>
+                            <td>@category.OnCreated</td>
+                        </tr>
                     }
-                </tbody>
-            </table>
-        }
+                }
+            </tbody>
+        </table>
 
-
-
+        <h4>Lista Twoich schowków (@UserId): </h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#Id Schowka</th>
+                    <th scope="col">Użytkownik</th>
+                    <th scope="col">Nazwa kategorii</th>
+                    <th scope="col">Ikona</th>
+                    <th scope="col">Utworzono</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Categories != null)
+                {
+                    @foreach (var category in UsersCategories)
+                    {
+                        <tr>
+                            <th>@category.Id</th>
+                            <td>@category.UserId</td>
+                            <td>@category.CategoryName</td>
+                            <td>@category.Icon</td>
+                            <td>@category.OnCreated</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
     </Authorized>
     <NotAuthorized>
         <h1>Witaj w Schowku</h1>
@@ -93,6 +90,8 @@
     public string UserId { get; set; }
 
     List<Category> Categories;
+
+    List<Category> UsersCategories;
 
     Category clipboard = new Category();
 
@@ -122,22 +121,23 @@
 
         }*@
 
-    public void GetUserIdData()
+public void GetUserIdData()
+{
+    if (_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated == true)
     {
-        if (_httpContextAccessor.HttpContext.User.Identity.IsAuthenticated == true)
-        {
-            UserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-        }
+        UserId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
     }
+}
 
-    protected override void OnInitialized()
-    {
-        GetUserIdData();
-    }
+protected override void OnInitialized()
+{
+    GetUserIdData();
+}
 
-    protected override async Task OnInitializedAsync()
-    {
-        Categories = await _data.GetCategories();
-    }
+protected override async Task OnInitializedAsync()
+{
+    Categories = await _data.GetCategories();
+    UsersCategories = await _data.GetUsersCategory(UserId);
+}
 
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SchowekWeb.Models;
@@ -23,10 +24,17 @@ namespace SchowekWeb.Data
             return await _dbContext.Categories.ToListAsync();
         }
 
-        //GET Category
+        //GET Category by CategoryID
         public async Task<Category> GetCategory(int categoryId)
         {
             var result = await _dbContext.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
+            return result;
+        }
+
+        // GET User's Category by UserID
+        public async Task<List<Category>> GetUsersCategory(string userId)
+        {
+            var result = await _dbContext.Categories.Where(c => c.UserId == userId).ToListAsync();
             return result;
         }
 

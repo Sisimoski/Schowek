@@ -1,0 +1,16 @@
+﻿<!-- Image Card -->
+<div class="card text-white bg-primary">
+    <img src="@ImagePath" class="card-item">
+    <div class="card-footer d-flex align-items-center">
+        <small class="text-light">@ItemOnCreated</small>
+        <button type="button" class="btn btn-sm btn-outline-danger ml-auto"><i class="bi bi-trash-fill"></i></button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string ImagePath { get; set; }
+
+    [Parameter]
+    public string ItemOnCreated { get; set; }
+}

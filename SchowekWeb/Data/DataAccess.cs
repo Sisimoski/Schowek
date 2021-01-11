@@ -38,6 +38,13 @@ namespace SchowekWeb.Data
             return result;
         }
 
+        // GET User's Category by UserID and CategoryID
+        public async Task<Category> GetCategoryByUserId(int categoryId, string userId)
+        {
+            var result = await _dbContext.Categories.FirstOrDefaultAsync(c => c.Id == categoryId && c.UserId == userId);
+            return result;
+        }
+
         //INSERT Category
         public async Task<Category> AddCategory(Category category)
         {
@@ -63,7 +70,7 @@ namespace SchowekWeb.Data
         }
 
         //DELETE Category
-        public async void DeleteCategory(int categoryId)
+        public async Task<Category> DeleteCategory(int categoryId)
         {
             var result = await _dbContext.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
             if (result != null)
@@ -71,6 +78,7 @@ namespace SchowekWeb.Data
                 _dbContext.Categories.Remove(result);
                 await _dbContext.SaveChangesAsync();
             }
+            return result;
         }
 
         // ------------- Items -------------
@@ -93,6 +101,13 @@ namespace SchowekWeb.Data
             return result;
         }
 
+
+        public async Task<List<Item>> GetUsersItemsByCategory(int categoryId, string userId)
+        {
+            var result = await _dbContext.Items.Where(i => i.UserId == userId && i.CategoryId == categoryId).ToListAsync();
+            return result;
+        }
+
         public async Task<Item> AddItem(Item item)
         {
             var result = await _dbContext.Items.AddAsync(item);
@@ -100,9 +115,20 @@ namespace SchowekWeb.Data
             return result.Entity;
         }
 
-        public async void DeleteItem(int itemId)
+        public async Task<Item> DeleteItem(int itemId)
         {
             var result = await _dbContext.Items.FirstOrDefaultAsync(i => i.Id == itemId);
+            if (result != null)
+            {
+                _dbContext.Items.Remove(result);
+                await _dbContext.SaveChangesAsync();
+            }
+            return result;
+        }
+
+        public async void DeleteUserItem(int itemId, string userId)
+        {
+            var result = await _dbContext.Items.FirstOrDefaultAsync(i => i.Id == itemId && i.UserId == userId);
             if (result != null)
             {
                 _dbContext.Items.Remove(result);

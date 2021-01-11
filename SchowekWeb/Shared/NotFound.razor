@@ -1,27 +1,46 @@
-﻿<div class="error-page">
-    <h2 class="headline text-warning"> 404</h2>
+﻿<Navbar />
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
 
-    <div class="error-content">
-        <h3><i class="fas fa-exclamation-triangle text-warning"></i> Ups! Nie znaleziono strony.</h3>
+            </div>
+        </div>
+    </div>
 
-        <p>
-            Nie udało się znaleźć strony, której szukałeś.
-            Możesz <a href="../../index.html">wrócić na stronę główną</a> albo spróbować użyć wyszukiwarki.
-        </p>
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="error-page">
+                    <h2 class="headline text-warning"> 404</h2>
 
-        <form class="search-form">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Search">
+                    <div class="error-content">
+                        <h3><i class="fas fa-exclamation-triangle text-warning"></i> Ups! Nie znaleziono strony.</h3>
 
-                <div class="input-group-append">
-                    <button type="submit" name="submit" class="btn btn-warning">
-                        <i class="fas fa-search"></i>
-                    </button>
+                        <p>
+                            Nie udało się znaleźć strony, której szukałeś.
+                            Możesz <a href="../../index.html">wrócić na stronę główną</a> albo spróbować użyć wyszukiwarki.
+                        </p>
+
+                        <form class="search-form">
+                            <div class="input-group">
+                                <input type="text" name="search" class="form-control" placeholder="Search">
+
+                                <div class="input-group-append">
+                                    <button type="submit" name="submit" class="btn btn-warning">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
+
 
 @code {
 

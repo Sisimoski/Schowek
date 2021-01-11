@@ -1,0 +1,28 @@
+﻿@using System.Globalization
+@using SchowekWeb.Data
+@using SchowekWeb.Models
+@inject IDataAccess _data
+<!-- Text Card -->
+<div class="card text-white bg-primary">
+    <div class="card-body overflow-auto card-item">
+        <h5 class="card-title"></h5>
+        <p class="card-text">
+            @ItemModel.Text
+        </p>
+    </div>
+    <div class="card-footer d-flex align-items-center">
+        <small class="text-light">@ItemModel.OnCreated.ToString("g", culture)</small>
+        <button @onclick="@DeleteItem" type="button" class="btn btn-sm btn-outline-danger ml-auto"><i class="bi bi-trash-fill"></i></button>
+    </div>
+</div>
+@code {
+    CultureInfo culture = new CultureInfo("pl-PL");
+
+    [Parameter]
+    public Item ItemModel { get; set; }
+
+    protected async Task DeleteItem()
+    {
+        await _data.DeleteItem(ItemModel.Id);
+    }
+}

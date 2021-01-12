@@ -1,0 +1,70 @@
+﻿@using SchowekWeb.Data
+@using SchowekWeb.Models
+@inject IDataAccess _data
+
+<div class="modal @ModalClass" id="changeCategoryModal" tabindex="-1" aria-hidden="true" style="display:@ModalDisplay">
+    <EditForm Model="@CategoryModel" OnValidSubmit="@UpdateCategory">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button @onclick="() => Close()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">Zmień nazwę schowka</span>
+                        <InputText @bind-Value="CategoryModel.CategoryName" type="text" class="form-control" placeholder="@CategoryModel.CategoryName"></InputText>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button @onclick="() => Close()" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="btn btn-primary">Zmień nazwę</button>
+                </div>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    [Parameter]
+    public Category CategoryModel { get; set; }
+
+    [Parameter]
+    public EventCallback<Category> OnCategoryNameChange { get; set; }
+
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+
+    @*protected async override Task OnParametersSetAsync()
+        {
+            CategoryModel = await _data.GetCategory(CategoryModel.Id);
+        }*@
+
+    async Task UpdateCategory()
+    {
+        await _data.UpdateCategory(CategoryModel);
+        await OnCategoryNameChange.InvokeAsync(CategoryModel);
+        Close();
+    }
+}

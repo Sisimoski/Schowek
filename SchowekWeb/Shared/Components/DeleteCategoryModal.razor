@@ -1,0 +1,58 @@
+﻿@using SchowekWeb.Data
+@using SchowekWeb.Models
+@inject IDataAccess _data
+@inject NavigationManager navManager 
+
+<div class="modal @ModalClass" id="deleteCategoryModal" tabindex="-1" aria-hidden="true" style="display:@ModalDisplay">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button @onclick="() => Close()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Czy na pewno chcesz usunąć ten schowek, wraz ze wszystkimi jego rzeczami?</p>
+            </div>
+            <div class="modal-footer">
+                <button @onclick="() => Close()" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                <button @onclick="() => DeleteCategory()" type="button" class="btn btn-danger">Usuń</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    [Parameter]
+    public Category CategoryModel { get; set; }
+
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+
+    protected async Task DeleteCategory()
+    {
+        Close();
+        await _data.DeleteCategory(CategoryModel.Id);
+        navManager.NavigateTo("/");
+    }
+}

@@ -1,4 +1,5 @@
-﻿@page "/Clipboard/{ClipboardId:int}"
+﻿@page "/"
+@page "/Clipboard/{ClipboardId:int?}"
 
 @using System.Security.Claims
 @using System.IO
@@ -9,139 +10,148 @@
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor
 @inject IDataAccess _data
 
-<Navbar CategoryName="" />
+@if (ClipboardId is not null)
+{
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
 
-<div class="content-wrapper">
-    <div class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
+                </div>
+            </div>
+        </div>
 
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
+                        @if (Category != null)
+                        {
+                            <h1 class="display-2 text-primary cut-text">@Category.CategoryName</h1>
+                            <div class="d-flex align-items-center mt-2">
+                                <h5 class="mb-0 text-dark cut-text">Utworzono: @Category.OnCreated.ToString("g", culture)</h5>
+                                <div class="btn-group ml-auto" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" @onclick="() => changeCategoryNameModal.Open()"><i class="bi bi-pencil-square"></i> Zmień nazwę</button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" @onclick="() => DeleteCategoryModal.Open()"><i class="bi bi-trash-fill"></i> Usuń</button>
+                                </div>
+                            </div>
+                            <div><hr /></div>
+
+                            @if (Items != null)
+                            {
+                                if (Items.Count > 0)
+                                {
+                                    <SearchItems />
+                                    <div class="row row-cols-2 row-cols-md-4 row-cols-md-5">
+                                        @foreach (var item in Items.OrderByDescending(Items => Items.OnCreated))
+                                        {
+                                            <div class="col">
+                                                <TextCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
+                                                <ItemDetails ItemModel="@item"></ItemDetails>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <h3 class="text-warning">W tym schowku nie ma żadnych danych.</h3>
+                                    <p>Dodaj nowe przedmioty do tego schowka używając pola tekstowego na dole, bądź wstawiając plik.</p>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            <h1 class="display-3 text-danger mb-5">Nie masz dostępu do tego schowka</h1>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <!-- Main Footer -->
+    <footer class="main-footer">
+        <EditForm Model="@newItem" OnValidSubmit="@InsertTextItem">
+            <div class="input-group">
+                <InputTextArea @bind-Value="@newItem.Text" class="form-control" placeholder="Wprowadź tekst..." rows="1" style="max-height: 100px;"></InputTextArea>
+                <button type="submit" class="btn btn-outline-primary">Wyślij</button>
+                <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item disabled" href="#">Więcej</a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <label for="inputFile" class="dropdown-item">
+                            Wstaw plik...
+                            <InputFile id="inputFile" class="d-none"></InputFile>
+                            @*<a class="dropdown-item" href="#">Wstaw plik...</a>*@
+                        </label>
+                    </li>
 
-    <div class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    @if (Category != null)
-                    {
-                        <h1 class="display-2 text-primary cut-text">@Category.CategoryName</h1>
-                        <div class="d-flex align-items-center mt-2">
-                            <h5 class="mb-0 cut-text">Utworzono: @Category.OnCreated.ToString("g", culture)</h5>
-                            <div class="btn-group ml-auto" role="group">
-                                <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-cursor-text"></i> Zmień nazwę</button>
-                                <button type="button" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash-fill"></i> Usuń</button>
-                            </div>
-                        </div>
-                        <div><hr /></div>
+                </ul>
+            </div>
+        </EditForm>
+    </footer>
 
+    <ChangeCategoryNameModal @ref="changeCategoryNameModal" CategoryModel="@Category" OnCategoryNameChange="@CategoryChanged" />
+    <DeleteCategoryModal @ref="DeleteCategoryModal" CategoryModel="@Category" />
+}
+else
+{
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col">
                         @if (Items != null)
                         {
                             if (Items.Count > 0)
                             {
+                                <h1 class="display-2 text-primary cut-text">Wszystkie rzeczy</h1>
+                                <div><hr /></div>
+
+                                <SearchItems />
                                 <div class="row row-cols-2 row-cols-md-4 row-cols-md-5">
-                                    @foreach (var item in Items)
+                                    @foreach (var item in Items.OrderByDescending(Items => Items.OnCreated))
                                     {
                                         <div class="col">
-                                            <TextCard ItemModel="@item" />
+                                            <TextCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
+                                            <ItemDetails ItemModel="@item"></ItemDetails>
                                         </div>
                                     }
                                 </div>
                             }
                             else
                             {
-                                <h3 class="text-warning">W tym schowku nie ma żadnych danych.</h3>
-                                <p>Dodaj nowe przedmioty do tego schowka używając pola tekstowego na dole, bądź wstawiając plik.</p>
+                                <h1 class="display-1 text-primary text-center">Witaj w Schowku</h1>
+                                <h3 class="text-warning">Nie masz jeszcze żadnych rzeczy.</h3>
+                                <p>Dodaj nowe przedmioty, wybierając swój schowek. Jeśli jeszcze nie masz schowka, najpierw dodaj nowy schowek.</p>
                             }
                         }
-                    }
-                    else
-                    {
-                        <h1 class="display-3 text-danger mb-5">Nie masz dostępu do tego schowka</h1>
-                        <NotFound />
-                    }
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Main Footer -->
-<footer class="main-footer">
-    <EditForm Model="@newItem" OnValidSubmit="@InsertTextItem">
-        <div class="input-group">
-            <InputTextArea @bind-Value="@newItem.Text" class="form-control" placeholder="Wprowadź tekst..." rows="1" style="max-height: 100px;"></InputTextArea>
-            <button type="submit" class="btn btn-outline-primary">Wyślij</button>
-            <button type="button" class="btn btn-outline-primary dropdown-toggle dropdown-toggle-split"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="visually-hidden">Toggle Dropdown</span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item disabled" href="#">Więcej</a></li>
-                <li>
-                    <hr class="dropdown-divider">
-                </li>
+}
 
-                <li><a class="dropdown-item" href="#">Przeglądaj plik...</a></li>
-
-            </ul>
-        </div>
-    </EditForm>
-</footer>
-
-
-
-@*<AuthorizeView Context="Auth">
-        <Authorized>
-            @if (Category != null)
-            {
-                <h1 class="display-1 text-primary">@Category.CategoryName</h1>
-
-                @if (Items != null)
-                {
-                    if (Items.Count > 0)
-                    {
-                        <div class="row row-cols-2 row-cols-md-4">
-                            @foreach (var item in Items)
-                            {
-                                <div class="col">
-                                    <div class="card text-white bg-primary">
-                                        <div class="card-body">
-                                            <h5 class="card-title"></h5>
-                                            <p class="card-text">@item.Text</p>
-                                        </div>
-                                        <div class="card-footer">
-                                            <small class="text-muted">@item.OnCreated.ToString("dddd, dd MMMM yyyy")</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <h3 class="text-warning">W tym schowku nie ma żadnych danych.</h3>
-                        <p>Dodaj nowe przedmioty do tego schowka używając pola tekstowego na dole, bądź wstawiając plik.</p>
-                    }
-                }
-            }
-            else
-            {
-                <h1 class="display-3 text-danger mb-5">Nie masz dostępu do tego schowka</h1>
-                <NotFound />
-            }
-        </Authorized>
-        <NotAuthorized>
-            <h1>Witaj w Schowku</h1>
-            <p>
-                Aby zacząć korzystać ze schowka zaloguj się lub zarejestruj konto, jeśli jeszcze nie masz.
-            </p>
-        </NotAuthorized>
-    </AuthorizeView>*@
 
 @code {
     [Parameter]
-    public int ClipboardId { get; set; }
+    public int? ClipboardId { get; set; }
 
     public Category Category { get; set; } = new Category();
 
@@ -150,6 +160,9 @@
     private DisplayItemModel newItem = new DisplayItemModel();
 
     CultureInfo culture = new CultureInfo("pl-PL");
+
+    private ChangeCategoryNameModal changeCategoryNameModal { get; set; }
+    private DeleteCategoryModal DeleteCategoryModal { get; set; }
 
     private async Task InsertTextItem()
     {
@@ -177,6 +190,24 @@
         }
     }
 
+    protected async Task CategoryChanged()
+    {
+        Category = await _data.GetCategoryByUserId((int)ClipboardId, UserId);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ClipboardId is not null)
+        {
+            Category = await _data.GetCategoryByUserId((int)ClipboardId, UserId);
+            Items = await _data.GetUsersItemsByCategory((int)ClipboardId, UserId);
+        }
+        else
+        {
+            Items = await _data.GetUsersItems(UserId);
+        }
+    }
+
     protected override void OnInitialized()
     {
         GetUserIdData();
@@ -184,7 +215,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Category = await _data.GetCategoryByUserId(ClipboardId, UserId);
-        Items = await _data.GetUsersItemsByCategory(ClipboardId, UserId);
+        if (ClipboardId is not null)
+        {
+            Category = await _data.GetCategoryByUserId((int)ClipboardId, UserId);
+            Items = await _data.GetUsersItemsByCategory((int)ClipboardId, UserId);
+        }
+        else
+        {
+            Items = await _data.GetUsersItems(UserId);
+        }
     }
 }

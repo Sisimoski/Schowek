@@ -8,5 +8,9 @@
 </div>
 
 @code {
-    
+    [Parameter]
+    public List<Item> SearchedItems { get; set; }
+
+    // Initialize SearchTerm to "" to prevent null's
+    string SearchTerm { get; set; } = "";
 }

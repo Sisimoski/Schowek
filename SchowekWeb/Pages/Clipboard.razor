@@ -41,9 +41,12 @@
                             {
                                 if (Items.Count > 0)
                                 {
-                                    <SearchItems />
+                                    <div class="input-group mb-3 flex-nowrap">
+                                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                        <input @bind-value="SearchTerm" @bind-value:event="oninput" type="text" class="form-control" placeholder="Szukaj..." />
+                                    </div>
                                     <div class="row row-cols-2 row-cols-md-4 row-cols-md-5">
-                                        @foreach (var item in Items.OrderByDescending(Items => Items.OnCreated))
+                                        @foreach (var item in FilteredItems.OrderByDescending(Items => Items.OnCreated))
                                         {
                                             <div class="col">
                                                 <TextCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
@@ -123,9 +126,12 @@ else
                                 <h1 class="display-2 text-primary cut-text">Wszystkie rzeczy</h1>
                                 <div><hr /></div>
 
-                                <SearchItems />
+                                <div class="input-group mb-3 flex-nowrap">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <input @bind-value="SearchTerm" @bind-value:event="oninput" type="text" class="form-control" placeholder="Szukaj..." />
+                                </div>
                                 <div class="row row-cols-2 row-cols-md-4 row-cols-md-5">
-                                    @foreach (var item in Items.OrderByDescending(Items => Items.OnCreated))
+                                    @foreach (var item in FilteredItems.OrderByDescending(Items => Items.OnCreated))
                                     {
                                         <div class="col">
                                             <TextCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
@@ -156,6 +162,11 @@ else
     public Category Category { get; set; } = new Category();
 
     public List<Item> Items;
+
+    // Initialize SearchTerm to "" to prevent null's
+    string SearchTerm { get; set; } = "";
+
+    public List<Item> FilteredItems => Items.Where(i => i.Text.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
     private DisplayItemModel newItem = new DisplayItemModel();
 

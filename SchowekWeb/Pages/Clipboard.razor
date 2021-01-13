@@ -6,9 +6,11 @@
 @using System.Globalization
 @using SchowekWeb.Data
 @using SchowekWeb.Models
+@using Microsoft.AspNetCore.Hosting
 
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor
 @inject IDataAccess _data
+@inject IWebHostEnvironment _env
 
 @if (ClipboardId is not null)
 {
@@ -91,7 +93,7 @@
                     <li>
                         <label for="inputFile" class="dropdown-item">
                             Wstaw plik...
-                            <InputFile id="inputFile" class="d-none"></InputFile>
+                            <InputFile OnChange="@InsertFileItem" accept="image/*,video/*,audio/*,application/*" id="inputFile" class="d-none"></InputFile>
                             @*<a class="dropdown-item" href="#">Wstaw plik...</a>*@
                         </label>
                     </li>
@@ -189,6 +191,59 @@ else
         Items.Add(i);
 
         newItem = new DisplayItemModel();
+    }
+
+    public string FileName { get; set; }
+    public string FilePath { get; set; }
+    public string FileType { get; set; }
+    public string FileSize { get; set; }
+
+    private async Task InsertFileItem(InputFileChangeEventArgs args)
+    {
+        var file = args.File;
+
+        if (file is not null)
+        {
+            var maxAllowedFileSize = 50 * 1024 * 1024; //50 MB
+
+            FileName = file.Name;
+            FileType = file.ContentType;
+            FileSize = file.Size.ToString();
+
+            var relativePath = Path.Combine("Uploads", UserId);
+            var dirToSave = Path.Combine(_env.WebRootPath, relativePath);
+            var di = new DirectoryInfo(dirToSave);
+
+            if (!di.Exists)
+            {
+                di.Create();
+            }
+
+            FilePath = Path.Combine(dirToSave, file.Name);
+
+            using (var stream = file.OpenReadStream(maxAllowedSize: maxAllowedFileSize))
+            {
+                using (var fileStream = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
+                {
+                    await stream.CopyToAsync(fileStream);
+                }
+            }
+        }
+
+        @*Item i = new Item
+        {
+            FileName = this.FileName,
+            FilePath = this.FilePath,
+            FileType = this.FilePath,
+            FileSize = this.FileSize,
+            OnCreated = DateTime.Now,
+            CategoryId = Category.Id,
+            UserId = this.UserId
+        };
+        await _data.AddItem(i);
+        Items.Add(i);
+
+        newItem = new DisplayItemModel();*@
     }
 
     public string UserId { get; set; }

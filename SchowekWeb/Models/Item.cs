@@ -12,7 +12,7 @@ namespace SchowekWeb.Models
         public string FileName { get; set; }
         public string FilePath { get; set; }
         public string FileType { get; set; }
-        public string FileSize { get; set; }
+        public long FileSize { get; set; }
 
         [Required]
         public DateTime OnCreated { get; set; }

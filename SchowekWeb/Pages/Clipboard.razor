@@ -7,6 +7,7 @@
 @using SchowekWeb.Data
 @using SchowekWeb.Models
 @using Microsoft.AspNetCore.Hosting
+@using System.Text.RegularExpressions
 
 @inject Microsoft.AspNetCore.Http.IHttpContextAccessor _httpContextAccessor
 @inject IDataAccess _data
@@ -48,12 +49,32 @@
                                         <input @bind-value="SearchTerm" @bind-value:event="oninput" type="text" class="form-control" placeholder="Szukaj..." />
                                     </div>
                                     <div class="row row-cols-2 row-cols-md-4 row-cols-md-5">
-                                        @foreach (var item in FilteredItems.OrderByDescending(Items => Items.OnCreated))
+                                        @foreach (var item in Items.OrderByDescending(Items => Items.OnCreated))
                                         {
-                                            <div class="col">
-                                                <TextCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
-                                                <ItemDetails ItemModel="@item"></ItemDetails>
-                                            </div>
+                                            @if (item.Text is not null)
+                                            {
+                                                <div class="col">
+                                                    <TextCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
+                                                    <ItemDetails ItemModel="@item"></ItemDetails>
+                                                </div>
+                                            }
+                                            else if (item.FileType.Contains("image"))
+                                            {
+                                                <div class="col">
+                                                    <ImageCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
+                                                    <ItemDetails ItemModel="@item"></ItemDetails>
+                                                </div>
+                                            }
+                                            else if (item.FileType.Contains("text") ||
+                                                item.FileType.Contains("application") ||
+                                                item.FileType.Contains("video") ||
+                                                item.FileType.Contains("audio"))
+                                            {
+                                                <div class="col">
+                                                    <FileCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
+                                                    <ItemDetails ItemModel="@item"></ItemDetails>
+                                                </div>
+                                            }
                                         }
                                     </div>
                                 }
@@ -93,7 +114,7 @@
                     <li>
                         <label for="inputFile" class="dropdown-item">
                             Wstaw plik...
-                            <InputFile OnChange="@InsertFileItem" accept="image/*,video/*,audio/*,application/*" id="inputFile" class="d-none"></InputFile>
+                            <InputFile OnChange="@InsertFileItem" accept="image/*,video/*,audio/*,application/*,text/*" id="inputFile" class="d-none"></InputFile>
                             @*<a class="dropdown-item" href="#">Wstaw plik...</a>*@
                         </label>
                     </li>
@@ -133,12 +154,32 @@ else
                                     <input @bind-value="SearchTerm" @bind-value:event="oninput" type="text" class="form-control" placeholder="Szukaj..." />
                                 </div>
                                 <div class="row row-cols-2 row-cols-md-4 row-cols-md-5">
-                                    @foreach (var item in FilteredItems.OrderByDescending(Items => Items.OnCreated))
+                                    @foreach (var item in Items.OrderByDescending(Items => Items.OnCreated))
                                     {
-                                        <div class="col">
-                                            <TextCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
-                                            <ItemDetails ItemModel="@item"></ItemDetails>
-                                        </div>
+                                        @if (item.Text is not null)
+                                        {
+                                            <div class="col">
+                                                <TextCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
+                                                <ItemDetails ItemModel="@item"></ItemDetails>
+                                            </div>
+                                        }
+                                        else if (item.FileType.Contains("image"))
+                                        {
+                                            <div class="col">
+                                                <ImageCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
+                                                <ItemDetails ItemModel="@item"></ItemDetails>
+                                            </div>
+                                        }
+                                        else if (item.FileType.Contains("text") ||
+                                            item.FileType.Contains("application") ||
+                                            item.FileType.Contains("video") ||
+                                            item.FileType.Contains("audio"))
+                                        {
+                                            <div class="col">
+                                                <FileCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
+                                                <ItemDetails ItemModel="@item"></ItemDetails>
+                                            </div>
+                                        }
                                     }
                                 </div>
                             }
@@ -168,7 +209,7 @@ else
     // Initialize SearchTerm to "" to prevent null's
     string SearchTerm { get; set; } = "";
 
-    public List<Item> FilteredItems => Items.Where(i => i.Text.ToLower().Contains(SearchTerm.ToLower())).ToList();
+    //public List<Item> FilteredItems => Items.Where(i => i.Text.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
     private DisplayItemModel newItem = new DisplayItemModel();
 
@@ -195,8 +236,9 @@ else
 
     public string FileName { get; set; }
     public string FilePath { get; set; }
+    public string FileUrl { get; set; }
     public string FileType { get; set; }
-    public string FileSize { get; set; }
+    public long FileSize { get; set; }
 
     private async Task InsertFileItem(InputFileChangeEventArgs args)
     {
@@ -208,10 +250,10 @@ else
 
             FileName = file.Name;
             FileType = file.ContentType;
-            FileSize = file.Size.ToString();
+            FileSize = file.Size;
 
             var relativePath = Path.Combine("Uploads", UserId);
-            var dirToSave = Path.Combine(_env.WebRootPath, relativePath);
+            var dirToSave = Path.Combine(_env.ContentRootPath, "wwwroot", relativePath);
             var di = new DirectoryInfo(dirToSave);
 
             if (!di.Exists)
@@ -220,6 +262,8 @@ else
             }
 
             FilePath = Path.Combine(dirToSave, file.Name);
+            FileUrl = Path.Combine("Uploads", UserId, FileName);
+            FileUrl = Regex.Replace(FileUrl, @"\s+", "%20");
 
             using (var stream = file.OpenReadStream(maxAllowedSize: maxAllowedFileSize))
             {
@@ -230,11 +274,11 @@ else
             }
         }
 
-        @*Item i = new Item
+        Item i = new Item
         {
             FileName = this.FileName,
-            FilePath = this.FilePath,
-            FileType = this.FilePath,
+            FilePath = this.FileUrl,
+            FileType = this.FileType,
             FileSize = this.FileSize,
             OnCreated = DateTime.Now,
             CategoryId = Category.Id,
@@ -243,7 +287,7 @@ else
         await _data.AddItem(i);
         Items.Add(i);
 
-        newItem = new DisplayItemModel();*@
+        newItem = new DisplayItemModel();
     }
 
     public string UserId { get; set; }

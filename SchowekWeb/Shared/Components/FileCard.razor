@@ -1,19 +1,65 @@
-﻿<!-- File Card -->
+﻿@using System.Globalization
+@using SchowekWeb.Data
+@using SchowekWeb.Models
+@inject IDataAccess _data
+
+<!-- File Card -->
 <div class="card text-white bg-primary">
-    <div class="card-body card-item overflow-auto d-flex flex-column">
-        <h5 class="card-title mb-auto">Hello World.cs</h5>
-        <p class="card-text my-auto">file/c#</p>
-        <p class="card-text my-auto">5.12 MB</p>
-        <button type="button" class="btn btn-secondary btn-block mt-auto"><i class="bi bi-file-earmark-arrow-down-fill"></i> Pobierz</button>
-    </div>
+    <NavLink href="@($"#itemDetails{ItemModel.Id}")" data-bs-toggle="modal">
+        <div class="card-body card-item overflow-auto d-flex flex-column">
+            <h5 class="card-title mb-auto">@ItemModel.FileName</h5>
+            <p class="card-text my-auto">@ItemModel.FileType</p>
+            <p class="card-text my-auto">@SizeSuffix(ItemModel.FileSize)</p>
+            @*<a href="@ItemModel.FilePath" role="button" class="btn btn-secondary btn-block mt-auto" download><i class="bi bi-cloud-download"></i> Pobierz</a>*@
+        </div>
+    </NavLink>
     <div class="card-footer d-flex align-items-center">
-        <small class="text-light">11.01.2021 20:30</small>
-        <button type="button" class="btn btn-sm btn-outline-danger ml-auto">
-            <i class="bi bi-trash-fill"></i>
-        </button>
+        <small class="text-light">@ItemModel.OnCreated.ToString("g", culture)</small>
+        <a href="@ItemModel.FilePath" role="button" class="btn btn-sm btn-secondary ml-auto" download target="_top"><i class="bi bi-cloud-download"></i></a>
+        <button @onclick="@DeleteItem" type="button" class="btn btn-sm btn-outline-danger ml-1"><i class="bi bi-trash-fill"></i></button>
     </div>
 </div>
 
 @code {
+    CultureInfo culture = new CultureInfo("pl-PL");
 
+    [Parameter]
+    public Item ItemModel { get; set; }
+
+    [Parameter]
+    public EventCallback<Item> OnDeleted { get; set; }
+
+    protected async Task DeleteItem()
+    {
+        await _data.DeleteItem(ItemModel.Id);
+        await OnDeleted.InvokeAsync(ItemModel);
+    }
+
+    static readonly string[] SizeSuffixes =
+                   { "bajtów", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+    static string SizeSuffix(Int64 value, int decimalPlaces = 2)
+    {
+        if (decimalPlaces < 0) { throw new ArgumentOutOfRangeException("decimalPlaces"); }
+        if (value < 0) { return "-" + SizeSuffix(-value); }
+        if (value == 0) { return string.Format("{0:n" + decimalPlaces + "} bajtów", 0); }
+
+        // mag is 0 for bytes, 1 for KB, 2, for MB, etc.
+        int mag = (int)Math.Log(value, 1024);
+
+        // 1L << (mag * 10) == 2 ^ (10 * mag) 
+        // [i.e. the number of bytes in the unit corresponding to mag]
+        decimal adjustedSize = (decimal)value / (1L << (mag * 10));
+
+        // make adjustment when the value is large enough that
+        // it would round up to 1000 or more
+        if (Math.Round(adjustedSize, decimalPlaces) >= 1000)
+        {
+            mag += 1;
+            adjustedSize /= 1024;
+        }
+
+        return string.Format("{0:n" + decimalPlaces + "} {1}",
+            adjustedSize,
+            SizeSuffixes[mag]);
+    }
 }

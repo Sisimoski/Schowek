@@ -259,8 +259,8 @@ namespace SchowekWeb.Data.Migrations
                     b.Property<string>("FilePath")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FileSize")
-                        .HasColumnType("TEXT");
+                    b.Property<long>("FileSize")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("FileType")
                         .HasColumnType("TEXT");

@@ -71,7 +71,9 @@
         await _data.AddCategory(c);
         await OnAdded.InvokeAsync(c);
 
+        CategoryModel = new();
         Close();
+
     }
 
     protected override void OnInitialized()

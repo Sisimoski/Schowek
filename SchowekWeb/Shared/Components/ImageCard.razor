@@ -1,16 +1,30 @@
-﻿<!-- Image Card -->
+﻿@using System.Globalization
+@using SchowekWeb.Data
+@using SchowekWeb.Models
+@inject IDataAccess _data
+<!-- Image Card -->
 <div class="card text-white bg-primary">
-    <img src="@ImagePath" class="card-item">
-    <div class="card-footer d-flex align-items-center">
-        <small class="text-light">@ItemOnCreated</small>
-        <button type="button" class="btn btn-sm btn-outline-danger ml-auto"><i class="bi bi-trash-fill"></i></button>
-    </div>
+    <NavLink href="@($"#itemDetails{ItemModel.Id}")" data-bs-toggle="modal">
+        <img src="@ItemModel.FilePath" class="card-item">
+    </NavLink>
+        <div class="card-footer d-flex align-items-center">
+            <small class="text-light">@ItemModel.OnCreated.ToString("g", culture)</small>
+            <button @onclick="@DeleteItem" type="button" class="btn btn-sm btn-outline-danger ml-auto"><i class="bi bi-trash-fill"></i></button>
+        </div>
 </div>
 
 @code {
-    [Parameter]
-    public string ImagePath { get; set; }
+    CultureInfo culture = new CultureInfo("pl-PL");
 
     [Parameter]
-    public string ItemOnCreated { get; set; }
+    public Item ItemModel { get; set; }
+
+    [Parameter]
+    public EventCallback<Item> OnDeleted { get; set; }
+
+    protected async Task DeleteItem()
+    {
+        await _data.DeleteItem(ItemModel.Id);
+        await OnDeleted.InvokeAsync(ItemModel);
+    }
 }

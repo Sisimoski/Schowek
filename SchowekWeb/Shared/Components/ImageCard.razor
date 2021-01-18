@@ -7,10 +7,11 @@
     <NavLink href="@($"#itemDetails{ItemModel.Id}")" data-bs-toggle="modal">
         <img src="@ItemModel.FilePath" class="card-item">
     </NavLink>
-        <div class="card-footer d-flex align-items-center">
-            <small class="text-light">@ItemModel.OnCreated.ToString("g", culture)</small>
-            <button @onclick="@DeleteItem" type="button" class="btn btn-sm btn-outline-danger ml-auto"><i class="bi bi-trash-fill"></i></button>
-        </div>
+    <div class="card-footer d-flex align-items-center">
+        <small class="text-light">@ItemModel.OnCreated.ToString("g", culture)</small>
+        <a href="@ItemModel.FilePath" role="button" class="btn btn-sm btn-outline-secondary ml-auto" download target="_top"><i class="bi bi-cloud-download"></i></a>
+        <button @onclick="@DeleteItem" type="button" class="btn btn-sm btn-outline-danger ml-1"><i class="bi bi-trash-fill"></i></button>
+    </div>
 </div>
 
 @code {

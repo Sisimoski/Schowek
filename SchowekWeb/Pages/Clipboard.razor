@@ -30,7 +30,7 @@
                     <div class="col">
                         @if (Category != null)
                         {
-                            <h1 class="display-2 text-primary cut-text">@Category.CategoryName</h1>
+                            <h1 class="display-2 text-primary cut-text fw-bold">@Category.CategoryName</h1>
                             <div class="d-flex align-items-center mt-2">
                                 <h5 class="mb-0 text-dark cut-text">Utworzono: @Category.OnCreated.ToString("g", culture)</h5>
                                 <div class="btn-group ml-auto" role="group">
@@ -44,10 +44,10 @@
                             {
                                 if (Items.Count > 0)
                                 {
-                                    <div class="input-group mb-3 flex-nowrap">
-                                        <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                        <input @bind-value="SearchTerm" @bind-value:event="oninput" type="text" class="form-control" placeholder="Szukaj..." />
-                                    </div>
+                                    @*<div class="input-group mb-3 flex-nowrap">
+                                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                            <input @bind-value="SearchTerm" @bind-value:event="oninput" type="text" class="form-control" placeholder="Szukaj..." />
+                                        </div>*@
                                     <div class="row row-cols-2 row-cols-md-4 row-cols-md-5">
                                         @foreach (var item in Items.OrderByDescending(Items => Items.OnCreated))
                                         {
@@ -65,10 +65,22 @@
                                                     <ItemDetails ItemModel="@item"></ItemDetails>
                                                 </div>
                                             }
+                                            else if (item.FileType.Contains("video"))
+                                            {
+                                                <div class="col">
+                                                    <VideoCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
+                                                    <ItemDetails ItemModel="@item"></ItemDetails>
+                                                </div>
+                                            }
+                                            else if (item.FileType.Contains("audio"))
+                                            {
+                                                <div class="col">
+                                                    <AudioCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
+                                                    <ItemDetails ItemModel="@item"></ItemDetails>
+                                                </div>
+                                            }
                                             else if (item.FileType.Contains("text") ||
-                                                item.FileType.Contains("application") ||
-                                                item.FileType.Contains("video") ||
-                                                item.FileType.Contains("audio"))
+                                                item.FileType.Contains("application"))
                                             {
                                                 <div class="col">
                                                     <FileCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
@@ -80,8 +92,11 @@
                                 }
                                 else
                                 {
-                                    <h3 class="text-warning">W tym schowku nie ma żadnych danych.</h3>
-                                    <p>Dodaj nowe przedmioty do tego schowka używając pola tekstowego na dole, bądź wstawiając plik.</p>
+                                    <div class="alert alert-secondary" role="alert">
+                                        <h4>W tym schowku nie ma żadnych danych.</h4>
+                                        <hr>
+                                        <p class="mb-0">Dodaj nowe przedmioty do tego schowka używając pola tekstowego na dole, bądź wstawiając plik.</p>
+                                    </div>
                                 }
                             }
                         }
@@ -115,7 +130,6 @@
                         <label for="inputFile" class="dropdown-item">
                             Wstaw plik...
                             <InputFile OnChange="@InsertFileItem" accept="image/*,video/*,audio/*,application/*,text/*" id="inputFile" class="d-none"></InputFile>
-                            @*<a class="dropdown-item" href="#">Wstaw plik...</a>*@
                         </label>
                     </li>
 
@@ -146,13 +160,13 @@ else
                         {
                             if (Items.Count > 0)
                             {
-                                <h1 class="display-2 text-primary cut-text">Wszystkie rzeczy</h1>
+                                <h1 class="display-2 text-primary cut-text fw-bold">Wszystkie rzeczy</h1>
                                 <div><hr /></div>
 
-                                <div class="input-group mb-3 flex-nowrap">
-                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                    <input @bind-value="SearchTerm" @bind-value:event="oninput" type="text" class="form-control" placeholder="Szukaj..." />
-                                </div>
+                                @*<div class="input-group mb-3 flex-nowrap">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input @bind-value="SearchTerm" @bind-value:event="oninput" type="text" class="form-control" placeholder="Szukaj..." />
+                </div>*@
                                 <div class="row row-cols-2 row-cols-md-4 row-cols-md-5">
                                     @foreach (var item in Items.OrderByDescending(Items => Items.OnCreated))
                                     {
@@ -170,10 +184,22 @@ else
                                                 <ItemDetails ItemModel="@item"></ItemDetails>
                                             </div>
                                         }
+                                        else if (item.FileType.Contains("video"))
+                                        {
+                                            <div class="col">
+                                                <VideoCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
+                                                <ItemDetails ItemModel="@item"></ItemDetails>
+                                            </div>
+                                        }
+                                        else if (item.FileType.Contains("audio"))
+                                        {
+                                            <div class="col">
+                                                <AudioCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
+                                                <ItemDetails ItemModel="@item"></ItemDetails>
+                                            </div>
+                                        }
                                         else if (item.FileType.Contains("text") ||
-                                            item.FileType.Contains("application") ||
-                                            item.FileType.Contains("video") ||
-                                            item.FileType.Contains("audio"))
+                                            item.FileType.Contains("application"))
                                         {
                                             <div class="col">
                                                 <FileCard ItemModel="@item" OnDeleted="OnInitializedAsync" />
@@ -185,9 +211,13 @@ else
                             }
                             else
                             {
-                                <h1 class="display-1 text-primary text-center">Witaj w Schowku</h1>
-                                <h3 class="text-warning">Nie masz jeszcze żadnych rzeczy.</h3>
-                                <p>Dodaj nowe przedmioty, wybierając swój schowek. Jeśli jeszcze nie masz schowka, najpierw dodaj nowy schowek.</p>
+                                <h1 class="display-1 mb-2 text-primary text-center fw-bold">Witaj w Schowku</h1>
+                                <div class="alert alert-secondary" role="alert">
+                                    <h4>Nie masz jeszcze żadnych schowków.</h4>
+                                    Zacznij od dodania nowego schowka, klikając na przycisk <strong class="text-primary">"Dodaj nowy schowek"</strong> znajdujący się z lewej strony, w menu bocznym.
+                                    <hr>
+                                    <p class="mb-0">Dodawaj nowe przedmioty, wybierając swój schowek. Jeśli jeszcze nie masz schowka, najpierw dodaj nowy schowek.</p>
+                                </div>
                             }
                         }
                     </div>
@@ -211,7 +241,7 @@ else
 
     //public List<Item> FilteredItems => Items.Where(i => i.Text.ToLower().Contains(SearchTerm.ToLower())).ToList();
 
-    private DisplayItemModel newItem = new DisplayItemModel();
+    private Item newItem = new Item();
 
     CultureInfo culture = new CultureInfo("pl-PL");
 
@@ -231,7 +261,7 @@ else
 
         Items.Add(i);
 
-        newItem = new DisplayItemModel();
+        newItem = new Item();
     }
 
     public string FileName { get; set; }
@@ -246,7 +276,7 @@ else
 
         if (file is not null)
         {
-            var maxAllowedFileSize = 50 * 1024 * 1024; //50 MB
+            var maxAllowedFileSize = 10 * 1024 * 1024; //10 MB
 
             FileName = file.Name;
             FileType = file.ContentType;
@@ -272,22 +302,22 @@ else
                     await stream.CopyToAsync(fileStream);
                 }
             }
+
+            Item i = new Item
+            {
+                FileName = this.FileName,
+                FilePath = this.FileUrl,
+                FileType = this.FileType,
+                FileSize = this.FileSize,
+                OnCreated = DateTime.Now,
+                CategoryId = Category.Id,
+                UserId = this.UserId
+            };
+            await _data.AddItem(i);
+            Items.Add(i);
+
+            newItem = new Item();
         }
-
-        Item i = new Item
-        {
-            FileName = this.FileName,
-            FilePath = this.FileUrl,
-            FileType = this.FileType,
-            FileSize = this.FileSize,
-            OnCreated = DateTime.Now,
-            CategoryId = Category.Id,
-            UserId = this.UserId
-        };
-        await _data.AddItem(i);
-        Items.Add(i);
-
-        newItem = new DisplayItemModel();
     }
 
     public string UserId { get; set; }

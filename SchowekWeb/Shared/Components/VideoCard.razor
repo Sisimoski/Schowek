@@ -1,0 +1,33 @@
+﻿@using System.Globalization
+@using SchowekWeb.Data
+@using SchowekWeb.Models
+@inject IDataAccess _data
+<!-- Video Card -->
+<div class="card text-white bg-primary">
+    <NavLink href="@($"#itemDetails{ItemModel.Id}")" data-bs-toggle="modal">
+        <video class="card-item">
+            <source src="@ItemModel.FilePath" type="@ItemModel.FileType" />
+        </video>
+    </NavLink>
+    <div class="card-footer d-flex align-items-center">
+        <small class="text-light">@ItemModel.OnCreated.ToString("g", culture)</small>
+        <a href="@ItemModel.FilePath" role="button" class="btn btn-sm btn-outline-secondary ml-auto" download target="_top"><i class="bi bi-cloud-download"></i></a>
+        <button @onclick="@DeleteItem" type="button" class="btn btn-sm btn-outline-danger ml-1"><i class="bi bi-trash-fill"></i></button>
+    </div>
+</div>
+
+@code {
+    CultureInfo culture = new CultureInfo("pl-PL");
+
+    [Parameter]
+    public Item ItemModel { get; set; }
+
+    [Parameter]
+    public EventCallback<Item> OnDeleted { get; set; }
+
+    protected async Task DeleteItem()
+    {
+        await _data.DeleteItem(ItemModel.Id);
+        await OnDeleted.InvokeAsync(ItemModel);
+    }
+}

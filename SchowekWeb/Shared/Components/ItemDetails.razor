@@ -20,17 +20,27 @@
                 {
                     <img src="@ItemModel.FilePath" class="rounded img-fluid">
                 }
+                else if (ItemModel.FileType.Contains("video"))
+                {
+                    <video controls class="img-fluid">
+                        <source src="@ItemModel.FilePath" type="@ItemModel.FileType" />
+                    </video>
+                }
+                else if (ItemModel.FileType.Contains("audio"))
+                {
+                    <audio controls class="img-fluid">
+                        <source src="@ItemModel.FilePath" type="@ItemModel.FileType" />
+                    </audio>
+                }
                 else if (ItemModel.FileType.Contains("text") ||
-                    ItemModel.FileType.Contains("application") ||
-                    ItemModel.FileType.Contains("video") ||
-                    ItemModel.FileType.Contains("audio"))
+                    ItemModel.FileType.Contains("application"))
                 {
                     <h5 class="text-primary">Nazwa pliku: @ItemModel.FileName</h5>
                     <p>Typ pliku: @ItemModel.FileType</p>
                     <p>Rozmiar: @SizeSuffix(ItemModel.FileSize)</p>
                 }
                 <hr />
-                <small class="text-light">@ItemModel.OnCreated.ToString("f", culture)</small>
+                <small>@ItemModel.OnCreated.ToString("f", culture)</small>
             </div>
             <div class="modal-footer">
                 @if (ItemModel.FilePath is not null)
@@ -51,15 +61,6 @@
 @code {
     [Parameter]
     public Item ItemModel { get; set; }
-
-    [Parameter]
-    public string ItemContent { get; set; }
-
-    [Parameter]
-    public DateTime ItemOnCreated { get; set; }
-
-    [Parameter]
-    public string ItemCategory { get; set; }
 
     CultureInfo culture = new CultureInfo("pl-PL");
 
@@ -94,7 +95,7 @@
         // mag is 0 for bytes, 1 for KB, 2, for MB, etc.
         int mag = (int)Math.Log(value, 1024);
 
-        // 1L << (mag * 10) == 2 ^ (10 * mag) 
+        // 1L << (mag * 10) == 2 ^ (10 * mag)
         // [i.e. the number of bytes in the unit corresponding to mag]
         decimal adjustedSize = (decimal)value / (1L << (mag * 10));
 

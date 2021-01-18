@@ -10,7 +10,8 @@ namespace SchowekWeb.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Wprowadź nazwę.")]
+        [MinLength(1, ErrorMessage = "Za krótka nazwa.")]
         public string CategoryName { get; set; }
 
         public string Icon { get; set; }

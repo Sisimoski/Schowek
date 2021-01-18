@@ -53,6 +53,6 @@
     {
         Close();
         await _data.DeleteCategory(CategoryModel.Id);
-        navManager.NavigateTo("/");
+        navManager.NavigateTo("/", true);
     }
 }

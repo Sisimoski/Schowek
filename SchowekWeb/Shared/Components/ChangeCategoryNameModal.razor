@@ -1,6 +1,7 @@
 ﻿@using SchowekWeb.Data
 @using SchowekWeb.Models
 @inject IDataAccess _data
+@inject NavigationManager navManager
 
 <div class="modal @ModalClass" id="changeCategoryModal" tabindex="-1" aria-hidden="true" style="display:@ModalDisplay">
     <EditForm Model="@CategoryModel" OnValidSubmit="@UpdateCategory">
@@ -66,5 +67,8 @@
         await _data.UpdateCategory(CategoryModel);
         await OnCategoryNameChange.InvokeAsync(CategoryModel);
         Close();
+
+        var thisPage = navManager.Uri;
+        navManager.NavigateTo(thisPage, true);
     }
 }
